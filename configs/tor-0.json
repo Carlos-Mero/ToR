@@ -1,0 +1,7 @@
+{
+	"description": "The simplest version of tor method, tested on MATH500 dataset with pass@1 accuracy",
+	"dataset": "MATH500",
+	"data_path": "datasets/test.jsonl",
+	"model": "gpt-4o-2024-08-06",
+	"sys_prompt": "You need to analyse the problem below and present your general idea of the solution, then complete the detailed steps of the solution based on the overall idea. Finally, you should put your final answer within \\boxed{}."
+}

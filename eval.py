@@ -55,6 +55,9 @@ def run_cot(config):
         d['correctness'] = correctness
         responses.append(d)
 
+        if config['test'] and n >= 5:
+            break
+
     # save the logs of the single run
     save_jsonl(responses, prefix + "/responses.jsonl")
     logs['problems_count'] = problem_cnt

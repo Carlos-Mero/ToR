@@ -19,6 +19,7 @@ def main():
     parser.add_argument('-c', '--config', type=str, help='path to the config file')
     parser.add_argument('-s', '--seed', type=int, default=1145, help='random seed for the program')
     parser.add_argument('-t', '--temperature', type=float, default=0.6, help='The temperature parameter for inference')
+    parser.add_argument('--test', action='store_true', help='Only complete the first five problems for test')
     # To be implemented, specific tor structure
     # parser.add_argument('--cot', action='store_true', help='Test the pass@1 accuracy with zero-shot cot')
     # parser.add_argument('--tor', action='store_true', help='Test the pass@1 accuracy with zero-shot tor reasoning')
@@ -29,6 +30,7 @@ def main():
         config = json.load(config_file)
         config['seed'] = args.seed
         config['temperature'] = args.temperature
+        config['test'] = args.test
         random.seed(args.seed)
         run(config)
     print(f"program run with seed {args.seed}")
