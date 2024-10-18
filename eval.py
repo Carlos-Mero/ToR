@@ -50,8 +50,8 @@ def run_cot(config):
         print(f"And the ground truth answer is: {ground_truth}")
         print(f"And the math comparison gives: {correctness}")
 
-        d['answer'] = ans
-        d['solution'] = cnt
+        d['pred_solution'] = cnt
+        d['pred_answer'] = ans
         d['correctness'] = correctness
         responses.append(d)
 
