@@ -3,7 +3,7 @@ import json
 import random
 import argparse
 
-from eval import run_cot
+from eval import run_cot, run_with_guidance
 
 # Settings of the project
 with open('./openai-config.json') as config_file:
@@ -12,7 +12,10 @@ with open('./openai-config.json') as config_file:
     os.environ["OPENAI_BASE_URL"] = openai_config['openai_base_url']
 
 def run(config):
-    run_cot(config)
+    if config['guidance']:
+        run_with_guidance(config)
+    else:
+        run_cot(config)
 
 def main():
     parser = argparse.ArgumentParser(description="This program is an attempt of Tree of Reasoning (ToR).")
@@ -21,6 +24,7 @@ def main():
     parser.add_argument('-t', '--temperature', type=float, default=0.6, help='The temperature parameter for inference')
     parser.add_argument('--test', action='store_true', help='Only complete the first five problems for test')
     # To be implemented, specific tor structure
+    # parser.add_argument('--guidance', action='store_true', help="Enable summary guidance when doing inference")
     # parser.add_argument('--cot', action='store_true', help='Test the pass@1 accuracy with zero-shot cot')
     # parser.add_argument('--tor', action='store_true', help='Test the pass@1 accuracy with zero-shot tor reasoning')
 
