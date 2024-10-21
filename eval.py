@@ -2,13 +2,15 @@ import os
 import copy
 import json
 from datetime import datetime
-from utils import math_equal, load_jsonl, save_jsonl, find_boxed
+from utils import math_equal, load_jsonl, save_jsonl
+from parser import find_box, strip_string
 from openai import OpenAI
 from tqdm import tqdm
 
 def extract_data(path):
     data = []
     for p in load_jsonl(path):
+        p['answer'] = strip_string(p['answer'])
         data.append(p)
     return data
 
@@ -41,7 +43,7 @@ def run_cot(config):
 
         cnt = completion.choices[0].message.content
         print(cnt)
-        ans = find_boxed(cnt)
+        ans = strip_string(find_box(cnt))
         ground_truth = d['answer']
         correctness = math_equal(ground_truth, ans)
         problem_cnt += 1
@@ -117,7 +119,7 @@ def run_with_guidance(config):
         cnt = completion.choices[0].message.content
         print(cnt)
 
-        ans = find_boxed(cnt)
+        ans = strip_string(find_box(cnt))
         ground_truth = d['answer']
         correctness = math_equal(ground_truth, ans)
         problem_cnt += 1

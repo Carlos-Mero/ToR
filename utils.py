@@ -327,25 +327,3 @@ def save_jsonl(samples, save_path):
         for sample in samples:
             f.write(json.dumps(sample, ensure_ascii=False) + "\n")
     print(f"Successfully saved samples in {save_path}")
-
-def find_boxed(pred_str: str):
-    ans = pred_str.split("boxed")[-1]
-    if not ans:
-        return ""
-    if ans[0] == "{":
-        stack = 1
-        a = ""
-        for c in ans[1:]:
-            if c == "{":
-                stack += 1
-                a += c
-            elif c == "}":
-                stack -= 1
-                if stack == 0:
-                    break
-                a += c
-            else:
-                a += c
-    else:
-        a = ans.split("$")[0].strip()
-    return a
