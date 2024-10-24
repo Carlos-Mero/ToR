@@ -151,3 +151,42 @@ def run_with_guidance(config):
         with open(prefix + "/logs.json", "w", encoding='utf-8') as f:
             json.dump(logs, f, indent=4)
         print("Successfully run the full test, and relavent logs were saved.")
+
+def generate_ideas(config):
+    current_time = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+    print(f"Start generating tor data at {current_time}")
+    print("="*50)
+    path = "./augdata/"
+    os.makedirs('./augdata/', exist_ok=True)
+    data = extract_data(config['data_path'])
+    client = OpenAI().chat.completions
+
+    for (n, d) in tqdm(enumerate(data), total=len(data)):
+        print(f"Dealing with problem:\n {d['problem']}")
+        print(f"The ground_truth answer is:\n {d['solution']}")
+        messages = [
+            {"role": "system", "content": config['summarize_prompt']},
+            {'role': 'user', 'content': d['problem']},
+            {'role': 'user', 'content': d['solution']}
+        ]
+        completion = client.create(
+            model=config['model'],
+            messages=messages,
+            temperature=config['temperature'],
+            seed=config['seed'],
+        )
+
+        cnt = completion.choices[0].message.content
+        print(f"Generated reasoning guidance: {cnt}")
+        d['idea'] = cnt
+
+        if config['test'] and n >= 5:
+            break
+
+    print("="*50)
+    print("Successfully generated the whole steps")
+    if config['test']:
+        save_jsonl(data, path + f"{current_time}.jsonl")
+        with open(path + f"config-{current_time}.json", "w", encoding='utf-8') as f:
+            json.dump(config, f, indent=4)
+        print(f"Successfully saved data to path: {path}")

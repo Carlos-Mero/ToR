@@ -1,0 +1,8 @@
+{
+	"description": "The simplest version of tor method, tested on MATH500 dataset with pass@1 accuracy",
+	"dataset": "MATH500",
+	"data_path": "datasets/test.jsonl",
+	"model": "gpt-4o-2024-08-06",
+	"type": "generate",
+	"summarize_prompt": "Here is a step by step solution of a math problem. You need to summarize the general idea of the whole solution to create a hint for the problem. You shuold not directly include the answers of each steps in your response. You should reply in the first person, as if it were your own thinking."
+}

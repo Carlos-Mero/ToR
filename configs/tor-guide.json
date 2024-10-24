@@ -3,7 +3,7 @@
 	"dataset": "MATH500",
 	"data_path": "datasets/test.jsonl",
 	"model": "gpt-4o-2024-08-06",
-	"guidance": true,
+	"type": "guidance",
 	"summarize_prompt": "Here is a step by step solution of a math problem. You need to summarize the general idea of the whole solution to create a hint for the problem. You shuold not directly include the answers of each steps in your response.",
 	"infer_prompt": "You need to analyse the problem below, and then complete the detailed steps of the solution based on the general idea we provided. Finally, you should put your final answer within \\boxed{}."
 }

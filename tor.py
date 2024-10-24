@@ -3,7 +3,7 @@ import json
 import random
 import argparse
 
-from eval import run_cot, run_with_guidance
+from eval import run_cot, run_with_guidance, generate_ideas
 
 # Settings of the project
 with open('./openai-config.json') as config_file:
@@ -12,10 +12,14 @@ with open('./openai-config.json') as config_file:
     os.environ["OPENAI_BASE_URL"] = openai_config['openai_base_url']
 
 def run(config):
-    if config['guidance']:
+    if config['type'] == 'generate':
+        generate_ideas(config)
+    elif config['type'] == 'guidance':
         run_with_guidance(config)
-    else:
+    elif config['type'] == 'basic':
         run_cot(config)
+    else:
+        raise NotImplementedError("Unknown inference strategy!")
 
 def main():
     parser = argparse.ArgumentParser(description="This program is an attempt of Tree of Reasoning (ToR).")
@@ -23,6 +27,7 @@ def main():
     parser.add_argument('-s', '--seed', type=int, default=1145, help='random seed for the program')
     parser.add_argument('-t', '--temperature', type=float, default=0.6, help='The temperature parameter for inference')
     parser.add_argument('--test', action='store_true', help='Only complete the first five problems for test')
+    # parser.add_argument('--generate', action='store_true', help='Using an advanced language model to generate the general reasoning steps.')
     # To be implemented, specific tor structure
     # parser.add_argument('--guidance', action='store_true', help="Enable summary guidance when doing inference")
     # parser.add_argument('--cot', action='store_true', help='Test the pass@1 accuracy with zero-shot cot')

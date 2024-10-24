@@ -3,6 +3,6 @@
 	"dataset": "MATH500",
 	"data_path": "datasets/test.jsonl",
 	"model": "gpt-4o-2024-08-06",
-	"guidance": false,
+	"type": "basic",
 	"sys_prompt": "You need to solve the problem below step by step, and put your final answer within \\boxed{}."
 }
