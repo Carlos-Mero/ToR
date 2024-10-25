@@ -4,6 +4,7 @@ import json
 from datetime import datetime
 from utils import math_equal, load_jsonl, save_jsonl
 from parser import find_box, strip_string
+import openai
 from openai import OpenAI
 from tqdm import tqdm
 
@@ -169,14 +170,21 @@ def generate_ideas(config):
             {'role': 'user', 'content': d['problem']},
             {'role': 'user', 'content': d['solution']}
         ]
-        completion = client.create(
-            model=config['model'],
-            messages=messages,
-            temperature=config['temperature'],
-            seed=config['seed'],
-        )
+        cnt = ""
+        completed = False
+        while not completed:
+            try:
+                completion = client.create(
+                    model=config['model'],
+                    messages=messages,
+                    temperature=config['temperature'],
+                    seed=config['seed'],
+                )
+                cnt = completion.choices[0].message.content
+                completed = True
+            except openai.error.OpenAIError as e:
+                print(f"Error occured: {e}, retrying to inference again.")
 
-        cnt = completion.choices[0].message.content
         print(f"Generated reasoning guidance: {cnt}")
         d['idea'] = cnt
 
@@ -185,7 +193,7 @@ def generate_ideas(config):
 
     print("="*50)
     print("Successfully generated the whole steps")
-    if config['test']:
+    if not config['test']:
         save_jsonl(data, path + f"{current_time}.jsonl")
         with open(path + f"config-{current_time}.json", "w", encoding='utf-8') as f:
             json.dump(config, f, indent=4)
