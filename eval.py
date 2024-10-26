@@ -4,7 +4,6 @@ import json
 from datetime import datetime
 from utils import math_equal, load_jsonl, save_jsonl
 from parser import find_box, strip_string
-import openai
 from openai import OpenAI
 from tqdm import tqdm
 
@@ -182,7 +181,7 @@ def generate_ideas(config):
                 )
                 cnt = completion.choices[0].message.content
                 completed = True
-            except openai.error.OpenAIError as e:
+            except Exception as e:
                 print(f"Error occured: {e}, retrying to inference again.")
 
         print(f"Generated reasoning guidance: {cnt}")
