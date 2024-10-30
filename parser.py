@@ -278,7 +278,7 @@ def strip_string(string, skip_unit=False):
 
     # remove percentage
     string = string.replace("\\%", "")
-    string = string.replace("\%", "")
+    # string = string.replace("\%", "")
     string = string.replace("%", "")
 
     # " 0." equivalent to " ." and "{0." equivalent to "{." Alternatively, add "0" if "." is the start of the string
@@ -534,7 +534,7 @@ def extract_answer(pred_str, data_name, use_last_number=True):
         pred = pred_str.split("答案是")[1].strip().split("\n\n")[0].strip()
     else:  # use the last number
         if use_last_number:
-            pattern = "-?\d*\.?\d+"
+            pattern = r"-?\d*\.?\d+"
             pred = re.findall(pattern, pred_str.replace(",", ""))
             if len(pred) >= 1:
                 pred = pred[-1]
@@ -684,7 +684,7 @@ def parse_question(example, data_name):
         options = "(" + options
         for ch in "BCD":
             if f" {ch}) " in options:
-                options = regex.sub(f" {ch}\) ", f" ({ch}) ", options)
+                options = regex.sub(f" {ch}\\) ", f" ({ch}) ", options)
         # question = f"{example['question'].strip()}\nWhat of the following is the right choice? Explain your answer.\n{options.strip()}"
         question = f"{example['question'].strip()}\nAnswer Choices: {options}"
     elif "aqua" in data_name:
@@ -718,7 +718,7 @@ def parse_question(example, data_name):
 
 
 def _test_extract_answer():
-    text = """
+    text = r"""
 This is still not equal to $0$, so we must have made another mistake.
 
 When we subtracted $7$ from $\frac{386}{64}$, we should have subtracted $7 \cdot 64$ from $386$, not the other way around. Let's correct that:
@@ -732,7 +732,7 @@ When we subtracted $7$ from $\frac{386}{64}$, we should have subtracted $7 \cdot
 \[\frac{386}{64}
 """
     print(extract_answer(text, "math-oai", use_last_number=False))
-    print(choice_answer_clean("\mathrm{(D)\}1,008,016"))
+    print(choice_answer_clean(r"\mathrm{(D)\}1,008,016"))
     # should output a dict
 
 
