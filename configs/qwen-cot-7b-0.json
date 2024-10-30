@@ -1,0 +1,8 @@
+{
+	"description": "The basic zero-shot CoT reasoning of GPT-4o on MATH500",
+	"dataset": "MATH500",
+	"data_path": "datasets/test.jsonl",
+	"model": "Qwen/Qwen2.5-Math-7B-Instruct",
+	"type": "basic-local",
+	"sys_prompt": "You need to solve the problem below step by step, and put your final answer within \\boxed{}."
+}
