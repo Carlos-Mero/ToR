@@ -212,8 +212,8 @@ def run_cot_local(config):
     problem_cnt = 0
     solved_cnt = 0
 
-    print("="*50)
     print(f"Now loading model: {config['model']}")
+    print("="*50)
 
     device = 'cuda'
     model = AutoModelForCausalLM.from_pretrained(
@@ -236,7 +236,7 @@ def run_cot_local(config):
         model_inputs = tokenizer([text], return_tensors='pt').to(device)
 
         generated_ids = model.generate(**model_inputs, max_new_tokens=1024)
-        generated_ids = [output_ids[len(input_ids)] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)]
+        generated_ids = [output_ids[len(input_ids):] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)]
         cnt = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
 
         print(cnt)
