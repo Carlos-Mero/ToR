@@ -3,6 +3,7 @@
 	"dataset": "MATH500",
 	"data_path": "datasets/test.jsonl",
 	"model": "Qwen/Qwen2.5-Math-7B-Instruct",
+	"openai_model": "gpt-4o-2024-08-06",
 	"type": "train-lora",
 	"datasets": ["augdata/tor1.jsonl", "augdata/tor2.jsonl"],
 	"sys_prompt": "You need to solve the problem below step by step, and put your final answer within \\boxed{}."

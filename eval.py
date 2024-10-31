@@ -305,7 +305,7 @@ def run_tor_local(config):
             {'role': 'user', 'content': d['solution']}
         ]
         completion = client.create(
-            model=config['model'],
+            model=config['openai_model'],
             messages=messages,
             temperature=config['temperature'],
             seed=config['seed'],
