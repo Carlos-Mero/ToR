@@ -3,7 +3,8 @@ import json
 import random
 import argparse
 
-from eval import run_cot, run_with_guidance, generate_ideas, run_cot_local
+from eval import run_cot, run_with_guidance, generate_ideas, run_cot_local, run_tor_local
+from train import training_loop
 
 # Settings of the project
 with open('./openai-config.json') as config_file:
@@ -20,6 +21,10 @@ def run(config):
         run_cot(config)
     elif config['type'] == 'basic-local':
         run_cot_local(config)
+    elif config['type'] == 'tor-guidance-local':
+        run_tor_local(config)
+    elif config['type'] == 'train-lora':
+        training_loop(config)
     else:
         raise NotImplementedError("Unknown inference strategy!")
 

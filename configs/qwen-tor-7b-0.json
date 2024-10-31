@@ -1,0 +1,9 @@
+{
+	"description": "The basic zero-shot CoT reasoning of GPT-4o on MATH500",
+	"dataset": "MATH500",
+	"data_path": "datasets/test.jsonl",
+	"model": "Qwen/Qwen2.5-Math-7B-Instruct",
+	"type": "tor-guidance-local",
+	"summarize_prompt": "Here is a step by step solution of a math problem. You need to summarize the general idea of the whole solution to create a hint for the problem. You shuold not directly include the answers of each steps in your response.",
+	"infer_prompt": "You need to analyse the problem below, and then complete the detailed steps of the solution based on the general idea we provided. Finally, you should put your final answer within \\boxed{}."
+}
