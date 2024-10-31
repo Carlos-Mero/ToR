@@ -304,15 +304,21 @@ def run_tor_local(config):
             {'role': 'user', 'content': d['problem']},
             {'role': 'user', 'content': d['solution']}
         ]
-        completion = client.create(
-            model=config['openai_model'],
-            messages=messages,
-            temperature=config['temperature'],
-            seed=config['seed'],
-        )
-
-        idea = completion.choices[0].message.content
-        print(f"Created summary:\n {idea}")
+        idea = ''
+        openai_completion = False
+        while not openai_completion:
+            try:
+                completion = client.create(
+                    model=config['openai_model'],
+                    messages=messages,
+                    temperature=config['temperature'],
+                    seed=config['seed'],
+                )
+                idea = completion.choices[0].message.content
+                print(f"Created summary:\n {idea}")
+                openai_completion = True
+            except Exception as e:
+                print(f"Error occured: {e}, retrying to inference again.")
 
         messages = [
             {'role': 'system', 'content': config['infer_prompt']},

@@ -1,44 +1,41 @@
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from transformers import TrainingArguments
 from utils import load_jsonl, save_jsonl
+from parser import find_box, strip_string
 
-def extract_trainingset_tokens(config):
+def extract_trainingset_tokens(config, tokenizer):
     data = []
+    device = "cuda" # the device to load the model onto
     for path in config['datasets']:
+        print(f"loading data form: {path}")
         for p in load_jsonl(path):
-            pass
-        print(path)
+            p['answer'] = strip_string(p['answer'])
+            messages = [
+                {"role": "system", "content": config['infer_prompt']},
+                {"role": "user", "content": p['problem']}
+            ]
+            text = tokenizer.apply_chat_template(
+                messages,
+                tokenize=False,
+                add_generation_prompt=True
+            )
+            model_inputs = tokenizer([text], return_tensors="pt").to(device)
+            p['tokenized_inputs'] = model_inputs
+            data.append(p)
     return data
 
 def training_loop(config):
     model_name = config['model']
     device = "cuda" # the device to load the model onto
 
-    training_data = extract_trainingset_tokens(config)
-
-    return
-
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
         torch_dtype="auto",
         device_map="auto"
     )
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    tokenizer = AutoTokenizer.from_pretrained(model_name, device_map="auto")
 
-    prompt = "Find the value of $x$ that satisfies the equation $4x+5 = 6x+7$."
-
-    # CoT
-    messages = [
-        {"role": "system", "content": "Please reason step by step, and put your final answer within \\boxed{}."},
-        {"role": "user", "content": prompt}
-    ]
-
-    text = tokenizer.apply_chat_template(
-        messages,
-        tokenize=False,
-        add_generation_prompt=True
-    )
-    model_inputs = tokenizer([text], return_tensors="pt").to(device)
+    training_data = extract_trainingset_tokens(config, tokenizer)
 
     generated_ids = model.generate(
         **model_inputs,
