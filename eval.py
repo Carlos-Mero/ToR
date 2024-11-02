@@ -179,6 +179,28 @@ def generate_ideas(config):
         print(f"Dealing with problem:\n {d['problem']}")
         print(f"The ground_truth answer is:\n {d['solution']}")
         messages = [
+            {'role': 'system', 'content': config['extend_prompt']},
+            {'role': 'user', 'content': d['problem']},
+            {'role': 'user', 'content': d['solution']}
+        ]
+        cnt = ""
+        completed = False
+        while not completed:
+            try:
+                completion = client.create(
+                    model=config['model'],
+                    messages=messages,
+                    temperature=config['temperature'],
+                    seed=config['seed'],
+                )
+                cnt = completion.choices[0].message.content
+                completed = True
+            except Exception as e:
+                print(f"Error occured: {e}, retrying to inference again.")
+        print(f"extended solution is:\n{cnt}")
+        d['solution'] = cnt
+
+        messages = [
             {"role": "system", "content": config['summarize_prompt']},
             {'role': 'user', 'content': d['problem']},
             {'role': 'user', 'content': d['solution']}
