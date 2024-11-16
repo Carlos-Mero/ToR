@@ -1,32 +1,43 @@
 from transformers import AutoModelForCausalLM, AutoTokenizer
-from transformers import TrainingArguments
-from utils import load_jsonl, save_jsonl
-from parser import find_box, strip_string
+# from transformers import TrainingArguments, Trainer
+from utils import load_jsonl
+from parser import strip_string
+from trl import SFTConfig, SFTTrainer, DataCollatorForCompletionOnlyLM
+from peft import LoraConfig, TaskType
+from datasets import Dataset
+from tqdm import tqdm
 
-def extract_trainingset_tokens(config, tokenizer):
+def extract_training_data(config):
     data = []
-    device = "cuda" # the device to load the model onto
-    for path in config['datasets']:
+    for path in config['training_dataset']:
         print(f"loading data form: {path}")
         for p in load_jsonl(path):
             p['answer'] = strip_string(p['answer'])
-            messages = [
-                {"role": "system", "content": config['infer_prompt']},
-                {"role": "user", "content": p['problem']}
-            ]
-            text = tokenizer.apply_chat_template(
-                messages,
-                tokenize=False,
-                add_generation_prompt=True
-            )
-            model_inputs = tokenizer([text], return_tensors="pt").to(device)
-            p['tokenized_inputs'] = model_inputs
+            messages = {
+                "prompt": f"{config['infer_prompt']}\n{p['problem']}",
+                "completion": f"{p['idea']}\n{p['solution']}"
+            }
+            data.append(messages)
+    return Dataset.from_list(data)
+
+def get_dataset(config):
+    data = []
+    for path in config['training_dataset']:
+        print(f"loading data from: {path}")
+        for p in load_jsonl(path):
             data.append(p)
     return data
 
+def formatting_prompts_func(example):
+    output_texts = []
+    for p in tqdm(example):
+        text = f"{p['infer_prompt']}\n{p['problem']}\n ### Solution\n{p['idea']}\n{p['solution']}"
+        output_texts.append(text)
+    return output_texts
+
 def training_loop(config):
     model_name = config['model']
-    device = "cuda" # the device to load the model onto
+    # device = "cuda" # the device to load the model onto
 
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
@@ -35,14 +46,31 @@ def training_loop(config):
     )
     tokenizer = AutoTokenizer.from_pretrained(model_name, device_map="auto")
 
-    training_data = extract_trainingset_tokens(config, tokenizer)
+    training_data = extract_training_data(config)
 
-    generated_ids = model.generate(
-        **model_inputs,
-        max_new_tokens=512
+    response_template = "### Solution:"
+    collator = DataCollatorForCompletionOnlyLM(
+        response_template=response_template,
+        tokenizer=tokenizer
     )
-    generated_ids = [
-        output_ids[len(input_ids):] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)
-    ]
+    training_args = SFTConfig(
+        output_dir=config['log_dir'],
+        max_seq_length=2048,
+        **config['sftparams']
+    )
 
-    response = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
+    peft_config = LoraConfig(
+        task_type=TaskType.CAUSAL_LM,
+        **config['lora_config']
+    )
+
+    trainer = SFTTrainer(
+        model,
+        train_dataset = training_data,
+        args = training_args,
+        # formatting_func=formatting_prompts_func,
+        data_collator=collator,
+        peft_config=peft_config
+    )
+
+    trainer.train()
