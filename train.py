@@ -47,11 +47,11 @@ def training_loop(config):
 
     training_data = extract_training_data(config)
 
-    response_template = "### Solution:"
-    collator = DataCollatorForCompletionOnlyLM(
-        response_template=response_template,
-        tokenizer=tokenizer
-    )
+    # response_template = "### Solution:"
+    # collator = DataCollatorForCompletionOnlyLM(
+    #     response_template=response_template,
+    #     tokenizer=tokenizer
+    # )
     training_args = SFTConfig(
         output_dir=config['log_dir'],
         **config['sftparams']
@@ -67,7 +67,7 @@ def training_loop(config):
         train_dataset = training_data,
         args = training_args,
         # formatting_func=formatting_prompts_func,
-        data_collator=collator,
+        # data_collator=collator,
         peft_config=peft_config
     )
 
