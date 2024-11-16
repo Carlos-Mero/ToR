@@ -3,7 +3,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from utils import load_jsonl
 from parser import strip_string
 from trl import SFTConfig, SFTTrainer, DataCollatorForCompletionOnlyLM
-from peft import LoraConfig, TaskType
+from peft import LoraConfig, TaskType, get_peft_model
 from datasets import Dataset
 from tqdm import tqdm
 
@@ -61,6 +61,8 @@ def training_loop(config):
         task_type=TaskType.CAUSAL_LM,
         **config['lora_config']
     )
+    model = get_peft_model(model, peft_config)
+    model.print_trainable_parameters()
 
     trainer = SFTTrainer(
         model,
@@ -68,7 +70,7 @@ def training_loop(config):
         args = training_args,
         # formatting_func=formatting_prompts_func,
         # data_collator=collator,
-        peft_config=peft_config
+        # peft_config=peft_config
     )
 
     trainer.train()

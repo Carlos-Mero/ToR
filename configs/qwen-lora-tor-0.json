@@ -13,11 +13,13 @@
   "sftparams": {
     "max_seq_length": 2048,
     "per_device_train_batch_size": 4,
-    "use_liger": true
+    "use_liger": true,
+    "num_train_epochs": 1.0
   },
 
   "lora_config": {
     "r": 8,
+    "inference_mode": false,
     "lora_alpha": 32,
     "lora_dropout": 0.01
   }
