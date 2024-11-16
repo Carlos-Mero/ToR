@@ -55,7 +55,6 @@ def training_loop(config):
     )
     training_args = SFTConfig(
         output_dir=config['log_dir'],
-        max_seq_length=2048,
         **config['sftparams']
     )
 
