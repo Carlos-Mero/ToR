@@ -42,7 +42,6 @@ def training_loop(config):
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
         torch_dtype="auto",
-        device_map="auto"
     )
     tokenizer = AutoTokenizer.from_pretrained(model_name, device_map="auto")
 
