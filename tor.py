@@ -3,7 +3,7 @@ import json
 import random
 import argparse
 
-from eval import run_cot, run_with_guidance, generate_ideas, run_cot_local, run_tor_local
+from eval import run_cot, run_with_guidance, generate_ideas, run_cot_local, run_tor_local, run_lora_local
 from train import training_loop
 
 # Settings of the project
@@ -25,6 +25,8 @@ def run(config):
         run_tor_local(config)
     elif config['type'] == 'train-lora':
         training_loop(config)
+    elif config['type'] == 'lora-local':
+        run_lora_local(config)
     else:
         raise NotImplementedError("Unknown inference strategy!")
 

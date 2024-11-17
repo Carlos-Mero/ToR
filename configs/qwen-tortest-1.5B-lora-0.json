@@ -1,0 +1,16 @@
+{
+	"description": "The basic zero-shot CoT reasoning of GPT-4o on MATH500",
+	"dataset": "MATH500",
+	"data_path": "datasets/test.jsonl",
+	"model": "Qwen/Qwen2.5-Math-1.5B-Instruct",
+  "adapter_path": "./training_logs/checkpoint-48000",
+	"type": "lora-local",
+	"sys_prompt": "You need to solve the problem below step by step, and put your final answer within \\boxed{}.",
+
+  "lora_config": {
+    "r": 8,
+    "inference_mode": true,
+    "lora_alpha": 32,
+    "lora_dropout": 0.01
+  }
+}
