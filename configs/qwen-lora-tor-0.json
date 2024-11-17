@@ -11,8 +11,8 @@
   "log_dir": "./training_logs",
   
   "sftparams": {
-    "max_seq_length": 4096,
-    "per_device_train_batch_size": 4,
+    "max_seq_length": 2048,
+    "per_device_train_batch_size": 2,
     "use_liger": true,
     "num_train_epochs": 4.0
   },
