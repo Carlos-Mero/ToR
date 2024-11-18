@@ -186,13 +186,14 @@ def generate_ideas(config):
         ]
         cnt = ""
         completed = False
+        seed_shift = 0
         while not completed:
             try:
                 completion = client.create(
                     model=config['model'],
                     messages=messages,
                     temperature=config['temperature'],
-                    seed=config['seed'],
+                    seed=config['seed'] + seed_shift,
                 )
                 cnt = completion.choices[0].message.content
                 completed = True
@@ -202,6 +203,7 @@ def generate_ideas(config):
                     if not math_equal(ground_truth, ans):
                         print("generated wrong answers!")
                         completed = False
+                seed_shift += 1
             except Exception as e:
                 print(f"Error occured: {e}, retrying to inference again.")
         print(f"extended solution is:\n{cnt}")
