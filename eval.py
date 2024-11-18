@@ -196,6 +196,12 @@ def generate_ideas(config):
                 )
                 cnt = completion.choices[0].message.content
                 completed = True
+                if cnt is not None:
+                    ans = strip_string(find_box(cnt))
+                    ground_truth = d['answer']
+                    if not math_equal(ground_truth, ans):
+                        print("generated wrong answers!")
+                        completed = False
             except Exception as e:
                 print(f"Error occured: {e}, retrying to inference again.")
         print(f"extended solution is:\n{cnt}")
