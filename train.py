@@ -6,6 +6,7 @@ from trl import SFTConfig, SFTTrainer, DataCollatorForCompletionOnlyLM
 from peft import LoraConfig, TaskType, get_peft_model
 from datasets import Dataset
 from tqdm import tqdm
+from datetime import datetime
 
 def extract_training_data(config):
     data = []
@@ -36,6 +37,7 @@ def formatting_prompts_func(example):
     return output_texts
 
 def training_loop(config):
+    current_time = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
     model_name = config['model']
     # device = "cuda" # the device to load the model onto
 
@@ -53,7 +55,7 @@ def training_loop(config):
     #     tokenizer=tokenizer
     # )
     training_args = SFTConfig(
-        output_dir=config['log_dir'],
+        output_dir=config['log_dir'] + current_time,
         **config['sftparams']
     )
 
