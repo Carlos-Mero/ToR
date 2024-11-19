@@ -204,8 +204,12 @@ def generate_ideas(config):
                         print("generated wrong answers!")
                         completed = False
                 seed_shift += 1
+                if seed_shift > 9:
+                    break
             except Exception as e:
                 print(f"Error occured: {e}, retrying to inference again.")
+        if seed_shift > 9:
+            continue
         print(f"extended solution is:\n{cnt}")
         d['solution'] = cnt
 
