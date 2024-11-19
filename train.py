@@ -29,13 +29,6 @@ def get_dataset(config):
             data.append(p)
     return data
 
-def formatting_prompts_func(example):
-    output_texts = []
-    for p in tqdm(example):
-        text = f"{p['infer_prompt']}\n{p['problem']}\n ### Solution\n{p['idea']}\n{p['solution']}"
-        output_texts.append(text)
-    return output_texts
-
 def training_loop(config):
     current_time = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
     model_name = config['model']

@@ -9,13 +9,15 @@ from parser import find_box, strip_string
 
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 from accelerate import Accelerator
+from datasets import Dataset
 from peft import LoraConfig, TaskType, PeftModel
 
-def extract_data(path):
+def extract_data(path, batch_size):
     data = []
     for p in load_jsonl(path):
         p['answer'] = strip_string(p['answer'])
         data.append(p)
+    data = Dataset.from_list(data)
     return data
 
 def copy_config(config):
@@ -68,7 +70,7 @@ def run_cot_local_parallel(config):
         device=accelerator.device
     )
     
-    data = extract_data(config['data_path'])
+    data = extract_data(config['data_path'], config['batch_size'])
     for (n, d) in tqdm(enumerate(data), total=len(data)):
         messages = [
             {'role': 'system', 'content': config['sys_prompt']},
@@ -135,7 +137,7 @@ def run_lora_local_parallel(config):
         device=accelerator.device
     )
     
-    data = extract_data(config['data_path'])
+    data = extract_data(config['data_path'], config['batch_size'])
     for (n, d) in tqdm(enumerate(data), total=len(data)):
         messages = [
             {'role': 'system', 'content': config['sys_prompt']},
