@@ -62,7 +62,7 @@ def run_cot_local_parallel(config):
     tokenizer = AutoTokenizer.from_pretrained(config['model'])
 
     pipe = pipeline(
-        "Qwen2ForCausalLM",
+        "text-generation",
         model=model,
         tokenizer=tokenizer,
         device=accelerator.device
@@ -129,7 +129,7 @@ def run_lora_local_parallel(config):
     tokenizer = AutoTokenizer.from_pretrained(config['model'])
 
     pipe = pipeline(
-        "Qwen2ForCausalLM",
+        "text-generation",
         model=model,
         tokenizer=tokenizer,
         device=accelerator.device
