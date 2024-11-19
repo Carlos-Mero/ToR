@@ -62,7 +62,7 @@ def run_cot_local_parallel(config):
     tokenizer = AutoTokenizer.from_pretrained(config['model'])
 
     pipe = pipeline(
-        "text-generation",
+        "Qwen2ForCausalLM",
         model=model,
         tokenizer=tokenizer,
         device=accelerator.device
@@ -82,6 +82,7 @@ def run_cot_local_parallel(config):
         )
         
         cnt = str(pipe(text, max_new_tokens=4096, return_full_text=False))
+        cnt = cnt[0]['generated_text']
 
         print(cnt)
         ans = strip_string(find_box(cnt))
@@ -128,7 +129,7 @@ def run_lora_local_parallel(config):
     tokenizer = AutoTokenizer.from_pretrained(config['model'])
 
     pipe = pipeline(
-        "text-generation",
+        "Qwen2ForCausalLM",
         model=model,
         tokenizer=tokenizer,
         device=accelerator.device
@@ -147,7 +148,8 @@ def run_lora_local_parallel(config):
             add_generation_prompt=True
         )
         
-        cnt = str(pipe(text, max_new_tokens=4096, return_full_text=False))
+        cnt = pipe(text, max_new_tokens=4096, return_full_text=False)
+        cnt = cnt[0]['generated_text']
 
         print(cnt)
         ans = strip_string(find_box(cnt))
