@@ -13,8 +13,9 @@
   "sftparams": {
     "max_seq_length": 2048,
     "per_device_train_batch_size": 1,
+    "num_train_epochs": 4.0,
     "use_liger": true,
-    "num_train_epochs": 4.0
+    "neftune_noise_alpha": 5
   },
 
   "lora_config": {
