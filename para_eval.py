@@ -7,7 +7,7 @@ from tqdm import tqdm
 from utils import math_equal, load_jsonl, save_jsonl
 from parser import find_box, strip_string
 
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 from accelerate import Accelerator
 from peft import LoraConfig, TaskType, PeftModel
 
@@ -45,19 +45,6 @@ def logging_inference(func):
         return accuracy, responses
     return wrapper
 
-def get_model_response(model, tokenizer, messages):
-    text = tokenizer.apply_chat_template(
-        messages,
-        tokenize=False,
-        add_generation_prompt=True
-    )
-    model_inputs = tokenizer([text], return_tensors='pt').to("cuda")
-
-    generated_ids = model.generate(**model_inputs, max_new_tokens=4096)
-    generated_ids = [output_ids[len(input_ids):] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)]
-    cnt = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
-    return cnt
-
 @logging_inference
 def run_cot_local_parallel(config):
     responses = []
@@ -73,6 +60,13 @@ def run_cot_local_parallel(config):
     )
     model = accelerator.prepare(model)
     tokenizer = AutoTokenizer.from_pretrained(config['model'])
+
+    pipe = pipeline(
+        "text-generation",
+        model=model,
+        tokenizer=tokenizer,
+        device=accelerator.device
+    )
     
     data = extract_data(config['data_path'])
     for (n, d) in tqdm(enumerate(data), total=len(data)):
@@ -80,8 +74,14 @@ def run_cot_local_parallel(config):
             {'role': 'system', 'content': config['sys_prompt']},
             {'role': 'user', 'content': d['problem']}
         ]
+
+        text = tokenizer.apply_chat_template(
+            messages,
+            tokenize=False,
+            add_generation_prompt=True
+        )
         
-        cnt = get_model_response(model, tokenizer, messages)
+        cnt = str(pipe(text, max_new_tokens=4096, return_full_text=False))
 
         print(cnt)
         ans = strip_string(find_box(cnt))
@@ -126,6 +126,13 @@ def run_lora_local_parallel(config):
     model = PeftModel.from_pretrained(model, config['adapter_path'])
     model = accelerator.prepare(model)
     tokenizer = AutoTokenizer.from_pretrained(config['model'])
+
+    pipe = pipeline(
+        "text-generation",
+        model=model,
+        tokenizer=tokenizer,
+        device=accelerator.device
+    )
     
     data = extract_data(config['data_path'])
     for (n, d) in tqdm(enumerate(data), total=len(data)):
@@ -134,7 +141,13 @@ def run_lora_local_parallel(config):
             {'role': 'user', 'content': d['problem']}
         ]
         
-        cnt = get_model_response(model, tokenizer, messages)
+        text = tokenizer.apply_chat_template(
+            messages,
+            tokenize=False,
+            add_generation_prompt=True
+        )
+        
+        cnt = str(pipe(text, max_new_tokens=4096, return_full_text=False))
 
         print(cnt)
         ans = strip_string(find_box(cnt))
