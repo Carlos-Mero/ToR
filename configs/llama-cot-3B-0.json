@@ -4,5 +4,6 @@
 	"data_path": "datasets/test.jsonl",
 	"model": "meta-llama/Llama-3.2-3B",
 	"type": "basic-local",
+  "batch_size": 4,
 	"sys_prompt": "You need to solve the problem below step by step, and put your final answer within \\boxed{}."
 }

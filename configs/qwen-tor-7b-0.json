@@ -5,6 +5,7 @@
 	"model": "Qwen/Qwen2.5-Math-7B-Instruct",
 	"openai_model": "gpt-4o-2024-08-06",
 	"type": "tor-guidance-local",
+  "batch_size": 4,
 	"summarize_prompt": "Here is a step by step solution of a math problem. You need to summarize the general idea of the whole solution to create a hint for the problem. You shuold not directly include the answers or results of each steps in your response, only the ideas of each step should be included.",
 	"infer_prompt": "You need to analyse the problem below, and then complete the detailed steps of the solution based on the general idea we provided. Finally, you should put your final answer within \\boxed{}."
 }
