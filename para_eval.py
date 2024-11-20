@@ -83,7 +83,7 @@ def run_cot_local_parallel(config):
             add_generation_prompt=True
         )
         
-        cnt = str(pipe(text, max_new_tokens=4096, return_full_text=False))
+        cnt = pipe(text, max_new_tokens=4096, return_full_text=False)
         cnt = cnt[0]['generated_text']
 
         print(cnt)
