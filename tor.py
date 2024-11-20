@@ -3,6 +3,7 @@ import json
 import random
 import argparse
 
+from utils import compare_diff
 from eval import run_cot, run_with_guidance, generate_ideas, run_tor_local
 from para_eval import run_cot_local_parallel, run_lora_local_parallel
 from train import training_loop
@@ -37,6 +38,8 @@ def main():
     parser.add_argument('-s', '--seed', type=int, default=1145, help='random seed for the program')
     parser.add_argument('-t', '--temperature', type=float, default=0.6, help='The temperature parameter for inference')
     parser.add_argument('--test', action='store_true', help='Only complete the first five problems for test')
+    parser.add_argument('-d', '--diff', type=str, nargs=2, help='diff mode finds the outputs responsible accuracy changes in two logs')
+    parser.add_argument('-dn', '--ndiff', type=int, default=1, help='this argument tells the diff mode to find the n-th difference in these logs')
     # parser.add_argument('--generate', action='store_true', help='Using an advanced language model to generate the general reasoning steps.')
     # To be implemented, specific tor structure
     # parser.add_argument('--guidance', action='store_true', help="Enable summary guidance when doing inference")
@@ -44,6 +47,11 @@ def main():
     # parser.add_argument('--tor', action='store_true', help='Test the pass@1 accuracy with zero-shot tor reasoning')
 
     args = parser.parse_args()
+
+    if args.diff is not None:
+        file_1, file_2 = args.diff
+        compare_diff(file_1, file_2, args.ndiff)
+        return
 
     with open(args.config) as config_file:
         config = json.load(config_file)

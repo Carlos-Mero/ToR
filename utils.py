@@ -327,3 +327,25 @@ def save_jsonl(samples, save_path):
         for sample in samples:
             f.write(json.dumps(sample, ensure_ascii=False) + "\n")
     print(f"Successfully saved samples in {save_path}")
+
+def compare_diff(path_1, path_2, count):
+    res_1 = load_jsonl(path_1)
+    res_2 = load_jsonl(path_2)
+    ccount = 0
+    for (r_1, r_2) in zip(res_1, res_2):
+        if r_1.correctness == r_2.correctness:
+            continue
+        else:
+            ccount += 1
+            if ccount >= count:
+                print("=="*50)
+                print(f"Difference Detected!\n\nWhere response_1 checks: {r_1.correctness}\nAnd response_2 checks: {r_2.correctness}\n\n")
+                print(f"Here is some meta information\n\nproblem: {r_1.problem}\nground_truth_ans: {r_1.answer}\nsubject: {r_1.subject}\ndifficulty level: {r_1.level}")
+                print("=="*50)
+                print(f"Pred Solution of log_1:\n\n{r_1.pred_solution}")
+                print("=="*50)
+                print(f"Pred Solution of log_2:\n\n{r_2.pred_solution}")
+                print("=="*50)
+                print(f"Difference Detected!\n\nWhere response_1 checks: {r_1.correctness}\nAnd response_2 checks: {r_2.correctness}\n\n")
+                print(f"Here is some meta information\n\nproblem: {r_1.problem}\nground_truth_ans: {r_1.answer}\nsubject: {r_1.subject}\ndifficulty level: {r_1.level}")
+                break
