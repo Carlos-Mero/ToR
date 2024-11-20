@@ -38,6 +38,7 @@ def main():
     parser.add_argument('-s', '--seed', type=int, default=1145, help='random seed for the program')
     parser.add_argument('-t', '--temperature', type=float, default=0.6, help='The temperature parameter for inference')
     parser.add_argument('--test', action='store_true', help='Only complete the first five problems for test')
+    parser.add_argument('-ns', '--n_samples', type=int, default=1, help='the maximum trials of a single problem, the default methods is greedy (records correct iff there exists one true reasoning paths)')
     parser.add_argument('-d', '--diff', type=str, nargs=2, help='diff mode finds the outputs responsible accuracy changes in two logs')
     parser.add_argument('-dn', '--ndiff', type=int, default=1, help='this argument tells the diff mode to find the n-th difference in these logs')
     # parser.add_argument('--generate', action='store_true', help='Using an advanced language model to generate the general reasoning steps.')
@@ -58,6 +59,7 @@ def main():
         config['seed'] = args.seed
         config['temperature'] = args.temperature
         config['test'] = args.test
+        config['n_samples'] = args.n_samples
         random.seed(args.seed)
         run(config)
     print(f"program run with seed {args.seed}")
