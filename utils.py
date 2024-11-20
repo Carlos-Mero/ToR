@@ -337,7 +337,7 @@ def compare_diff(path_1, path_2, count):
             continue
         else:
             ccount += 1
-            if ccount >= count:
+            if ccount == count:
                 print("=="*50)
                 print(f"Difference Detected!\n\nWhere response_1 checks: {r_1['correctness']}\nAnd response_2 checks: {r_2['correctness']}\n\n")
                 print(f"Here is some meta information\n\nproblem: {r_1['problem']}\nground_truth_ans: {r_1['answer']}\nsubject: {r_1['subject']}\ndifficulty level: {r_1['level']}")
@@ -348,4 +348,3 @@ def compare_diff(path_1, path_2, count):
                 print("=="*50)
                 print(f"Difference Detected!\n\nWhere response_1 checks: {r_1['correctness']}\nAnd response_2 checks: {r_2['correctness']}\n\n")
                 print(f"Here is some meta information\n\nproblem: {r_1['problem']}\nground_truth_ans: {r_1['answer']}\nsubject: {r_1['subject']}\ndifficulty level: {r_1['level']}")
-                break
