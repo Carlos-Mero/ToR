@@ -1,6 +1,7 @@
 import os
 import json
 import copy
+import random
 from datetime import datetime
 from tqdm import tqdm
 
@@ -72,24 +73,34 @@ def run_cot_local_parallel(config):
     
     data = extract_data(config['data_path'], config['batch_size'])
     for (n, d) in tqdm(enumerate(data), total=len(data)):
-        messages = [
-            {'role': 'system', 'content': config['sys_prompt']},
-            {'role': 'user', 'content': d['problem']}
-        ]
-
-        text = tokenizer.apply_chat_template(
-            messages,
-            tokenize=False,
-            add_generation_prompt=True
-        )
-        
-        cnt = pipe(text, max_new_tokens=4096, return_full_text=False)
-        cnt = cnt[0]['generated_text']
-
-        print(cnt)
-        ans = strip_string(find_box(cnt))
+        correctness = False
+        cnt = ''
+        ans = ''
         ground_truth = d['answer']
-        correctness = math_equal(ground_truth, ans)
+
+        for i in range(config['n_samples']):
+            random.seed(config['seed'] * i)
+            messages = [
+                {'role': 'system', 'content': config['sys_prompt']},
+                {'role': 'user', 'content': d['problem']}
+            ]
+
+            text = tokenizer.apply_chat_template(
+                messages,
+                tokenize=False,
+                add_generation_prompt=True
+            )
+            
+            cnt = pipe(text, max_new_tokens=4096, return_full_text=False)
+            cnt = cnt[0]['generated_text']
+
+            print(cnt)
+            ans = strip_string(find_box(cnt))
+            ground_truth = d['answer']
+            correctness = math_equal(ground_truth, ans)
+            if correctness:
+                break
+
         problem_cnt += 1
         if correctness:
             solved_cnt += 1
@@ -145,6 +156,7 @@ def run_lora_local_parallel(config):
         ground_truth = d['answer']
 
         for i in range(config['n_samples']):
+            random.seed(config['seed'] * i)
             messages = [
                 {'role': 'system', 'content': config['sys_prompt']},
                 {'role': 'user', 'content': d['problem']}
