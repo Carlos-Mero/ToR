@@ -80,8 +80,8 @@ def run_cot_local_parallel(config):
         for i in range(config['n_samples']):
             set_all_random_seed(config['seed'] + i)
             messages = [
-                {'role': 'system', 'content': config['sys_prompt']},
-                {'role': 'user', 'content': d['problem']}
+                {'role': 'system', 'content': f"{config['sys_prompt']}\n\n{d['problem']}"},
+                # {'role': 'user', 'content': d['problem']}
             ]
 
             text = tokenizer.apply_chat_template(
@@ -157,8 +157,8 @@ def run_lora_local_parallel(config):
         for i in range(config['n_samples']):
             set_all_random_seed(config['seed'] + i)
             messages = [
-                {'role': 'system', 'content': config['sys_prompt']},
-                {'role': 'user', 'content': d['problem']}
+                {'role': 'system', 'content': f"{config['sys_prompt']}\n\n{d['problem']}"},
+                # {'role': 'user', 'content': d['problem']}
             ]
             
             text = tokenizer.apply_chat_template(

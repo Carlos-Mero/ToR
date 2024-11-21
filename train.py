@@ -15,7 +15,7 @@ def extract_training_data(config):
         for p in load_jsonl(path):
             p['answer'] = strip_string(p['answer'])
             messages = {
-                "prompt": f"{config['infer_prompt']}\n{p['problem']}",
+                "prompt": f"{config['infer_prompt']}\n\n{p['problem']}",
                 "completion": f"### Idea\n\n{p['idea']}\n\n### Detailed Solution\n\n{p['solution']}"
             }
             data.append(messages)
