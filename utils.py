@@ -2,6 +2,10 @@ import re
 import json
 import regex
 import os
+import random
+import numpy as np
+import torch
+from transformers import set_seed
 import multiprocessing
 from math import isclose
 from typing import Union, Iterable, Any
@@ -349,3 +353,10 @@ def compare_diff(path_1, path_2, count):
                 print(f"Difference Detected!\n\nWhere response_1 checks: {r_1['correctness']}\nAnd response_2 checks: {r_2['correctness']}\n\n")
                 print(f"Here is some meta information\n\nproblem: {r_1['problem']}\nground_truth_ans: {r_1['answer']}\nsubject: {r_1['subject']}\ndifficulty level: {r_1['level']}")
                 break
+
+def set_all_random_seed(seed):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    set_seed(seed)

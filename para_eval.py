@@ -1,11 +1,10 @@
 import os
 import json
 import copy
-import random
 from datetime import datetime
 from tqdm import tqdm
 
-from utils import math_equal, load_jsonl, save_jsonl
+from utils import math_equal, load_jsonl, save_jsonl, set_all_random_seed
 from parser import find_box, strip_string
 
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
@@ -79,7 +78,7 @@ def run_cot_local_parallel(config):
         ground_truth = d['answer']
 
         for i in range(config['n_samples']):
-            random.seed(config['seed'] * i)
+            set_all_random_seed(config['seed'] + i)
             messages = [
                 {'role': 'system', 'content': config['sys_prompt']},
                 {'role': 'user', 'content': d['problem']}
@@ -156,7 +155,7 @@ def run_lora_local_parallel(config):
         ground_truth = d['answer']
 
         for i in range(config['n_samples']):
-            random.seed(config['seed'] * i)
+            set_all_random_seed(config['seed'] + i)
             messages = [
                 {'role': 'system', 'content': config['sys_prompt']},
                 {'role': 'user', 'content': d['problem']}

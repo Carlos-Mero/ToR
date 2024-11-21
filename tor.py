@@ -3,7 +3,7 @@ import json
 import random
 import argparse
 
-from utils import compare_diff
+from utils import compare_diff, set_all_random_seed
 from eval import run_cot, run_with_guidance, generate_ideas, run_tor_local
 from para_eval import run_cot_local_parallel, run_lora_local_parallel
 from train import training_loop
@@ -60,7 +60,7 @@ def main():
         config['temperature'] = args.temperature
         config['test'] = args.test
         config['n_samples'] = args.n_samples
-        random.seed(args.seed)
+        set_all_random_seed(args.seed)
         run(config)
     print(f"program run with seed {args.seed}")
 
