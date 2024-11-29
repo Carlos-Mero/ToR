@@ -12,6 +12,8 @@ from accelerate import Accelerator
 from datasets import Dataset
 from peft import LoraConfig, TaskType, PeftModel
 
+import vllm
+
 def extract_data(path, batch_size):
     data = []
     for p in load_jsonl(path):
@@ -194,3 +196,7 @@ def run_lora_local_parallel(config):
 
     accuracy = float(solved_cnt) / float(problem_cnt)
     return accuracy, responses
+
+@logging_inference
+def sample_tor_local(config):
+    pass

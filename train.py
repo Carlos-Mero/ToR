@@ -30,10 +30,9 @@ def get_dataset(config):
             data.append(p)
     return data
 
-def training_loop(config):
+def training_loop_lora(config):
     current_time = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
     model_name = config['model']
-    # device = "cuda" # the device to load the model onto
 
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
@@ -43,13 +42,8 @@ def training_loop(config):
 
     training_data = extract_training_data(config)
 
-    # response_template = "### Solution:"
-    # collator = DataCollatorForCompletionOnlyLM(
-    #     response_template=response_template,
-    #     tokenizer=tokenizer
-    # )
     training_args = SFTConfig(
-        output_dir=config['log_dir'] + '/' + current_time,
+        output_dir=config['log_dir'] + '/' + "tlora" + current_time,
         **config['sftparams']
     )
 
@@ -64,12 +58,35 @@ def training_loop(config):
         model,
         train_dataset = training_data,
         args = training_args,
-        # formatting_func=formatting_prompts_func,
-        # data_collator=collator,
-        # peft_config=peft_config
     )
 
     trainer.train()
+
+def training_loop_full(config):
+    current_time = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+    model_name = config['model']
+
+    model = AutoModelForCausalLM.from_pretrained(
+        model_name,
+        torch_dtype="auto",
+    )
+    tokenizer = AutoTokenizer.from_pretrained(model_name, device_map="auto")
+
+    training_data = extract_training_data(config)
+
+    training_args = SFTConfig(
+        output_dir=config['log_dir'] + '/' + "tfull" + current_time,
+        **config['sftparams']
+    )
+
+    trainer = SFTTrainer(
+        model,
+        train_dataset = training_data,
+        args = training_args,
+    )
+
+    trainer.train()
+
 
 def format_input(example):
     return {

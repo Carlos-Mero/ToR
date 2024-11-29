@@ -6,7 +6,7 @@ import argparse
 from utils import compare_diff, set_all_random_seed
 from eval import run_cot, run_with_guidance, generate_ideas, run_tor_local
 from para_eval import run_cot_local_parallel, run_lora_local_parallel
-from train import training_loop, full_sft
+from train import training_loop_lora, training_loop_full, full_sft
 
 # Settings of the project
 with open('./openai-config.json') as config_file:
@@ -26,7 +26,9 @@ def run(config):
     elif config['type'] == 'tor-guidance-local':
         run_tor_local(config)
     elif config['type'] == 'train-lora':
-        training_loop(config)
+        training_loop_lora(config)
+    elif config['type'] == 'train-full':
+        training_loop_full(config)
     elif config['type'] == 'lora-local':
         run_lora_local_parallel(config)
     elif config['type'] == 'train-sft-full':

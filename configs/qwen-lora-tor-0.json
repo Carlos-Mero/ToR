@@ -1,9 +1,8 @@
 {
-	"description": "The basic zero-shot CoT reasoning of GPT-4o on MATH500",
+	"description": "Train qwen2.5-Math-1.5B-Instruct with lora on synthetic tor dataset",
 	"dataset": "MATH500",
 	"model": "Qwen/Qwen2.5-Math-1.5B-Instruct",
 	"type": "train-lora",
-  "batch_size": 4,
 	"training_dataset": ["augdata/tor1.jsonl", "augdata/tor2.jsonl"],
   "vali_dataset": "datasets/test.jsonl",
 	"eval_datasets": ["datasets/test.jsonl"],

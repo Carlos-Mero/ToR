@@ -9,7 +9,7 @@
 	"sys_prompt": "You need to solve the problem below step by step, and put your final answer within \\boxed{}.",
 
   "lora_config": {
-    "r": 8,
+    "r": 16,
     "inference_mode": true,
     "lora_alpha": 32,
     "lora_dropout": 0.01
