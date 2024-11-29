@@ -5,6 +5,7 @@
 	"model": "Qwen/Qwen2.5-Math-1.5B",
   "vali_dataset": "datasets/test.jsonl",
 	"eval_datasets": ["datasets/test.jsonl"],
+	"infer_prompt": "You need to solve the problem below step by step, and put your final answer within \\boxed{}.",
 
   "log_dir": "./training_logs",
   
