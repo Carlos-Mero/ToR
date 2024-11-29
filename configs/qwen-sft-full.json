@@ -1,0 +1,19 @@
+{
+	"description": "The basic zero-shot CoT reasoning of GPT-4o on MATH500",
+	"model": "Qwen/Qwen2.5-Math-1.5B",
+	"type": "train-sft-full",
+	"sft_dataset": "yingyingzhang/metamath-qwen2-math",
+  "batch_size": 1,
+  "vali_dataset": "datasets/test.jsonl",
+	"eval_datasets": ["datasets/test.jsonl"],
+
+  "log_dir": "./training_logs",
+  
+  "sftparams": {
+    "max_seq_length": 4096,
+    "per_device_train_batch_size": 1,
+    "num_train_epochs": 3.0,
+    "use_liger": true,
+    "neftune_noise_alpha": 5
+  },
+}

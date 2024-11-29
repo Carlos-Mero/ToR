@@ -4,7 +4,8 @@ from utils import load_jsonl
 from parser import strip_string
 from trl import SFTConfig, SFTTrainer, DataCollatorForCompletionOnlyLM
 from peft import LoraConfig, TaskType, get_peft_model
-from datasets import Dataset
+from datasets import Dataset, load_dataset
+
 from tqdm import tqdm
 from datetime import datetime
 
@@ -48,7 +49,7 @@ def training_loop(config):
     #     tokenizer=tokenizer
     # )
     training_args = SFTConfig(
-        output_dir=config['log_dir'] + current_time,
+        output_dir=config['log_dir'] + '/' + current_time,
         **config['sftparams']
     )
 
@@ -66,6 +67,38 @@ def training_loop(config):
         # formatting_func=formatting_prompts_func,
         # data_collator=collator,
         # peft_config=peft_config
+    )
+
+    trainer.train()
+
+def format_input(example):
+    return {
+        'prompt': example['prompt'],
+        'completion': example['response']
+    }
+
+def full_sft(config):
+    current_time = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+    model_name = config['model']
+
+    ds = load_dataset(config['sft_dataset'])
+    sft_ds = ds.map(format_input)
+
+    model = AutoModelForCausalLM.from_pretrained(
+        model_name,
+        torch_dtype="auto",
+    )
+    tokenizer = AutoTokenizer.from_pretrained(model_name, device_map="auto")
+
+    training_args = SFTConfig(
+        output_dir=config['log_dir'] + '/' + current_time,
+        **config['sftparams']
+    )
+
+    trainer = SFTTrainer(
+        model,
+        train_dataset = sft_ds,
+        args = training_args,
     )
 
     trainer.train()
