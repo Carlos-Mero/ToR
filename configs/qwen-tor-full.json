@@ -1,7 +1,7 @@
 {
 	"description": "Train qwen2.5-Math-1.5B with full parameters on the synthetic tor dataset",
 	"training_dataset": ["augdata/tor1.jsonl", "augdata/tor2.jsonl"],
-	"type": "train_full",
+	"type": "train-full",
 	"model": "Qwen/Qwen2.5-Math-1.5B",
   "vali_dataset": "datasets/test.jsonl",
 	"eval_datasets": ["datasets/test.jsonl"],
