@@ -81,7 +81,7 @@ def full_sft(config):
     current_time = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
     model_name = config['model']
 
-    ds = load_dataset(config['sft_dataset'])
+    ds = load_dataset(config['sft_dataset'], split='validation')
     sft_ds = ds.map(format_input)
 
     model = AutoModelForCausalLM.from_pretrained(
