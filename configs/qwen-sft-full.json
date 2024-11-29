@@ -15,5 +15,5 @@
     "num_train_epochs": 3.0,
     "use_liger": true,
     "neftune_noise_alpha": 5
-  },
+  }
 }
