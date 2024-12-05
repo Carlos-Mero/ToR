@@ -17,7 +17,7 @@ with open('./openai-config.json') as config_file:
 def run(config):
     if config['type'] == 'generate':
         generate_ideas(config)
-    elif config['generate-local']:
+    elif config['type'] == 'generate-local':
         tor_gen_local(config)
     elif config['type'] == 'guidance':
         run_with_guidance(config)
