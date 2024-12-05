@@ -1,6 +1,7 @@
 import os
 import json
 import copy
+import random
 from datetime import datetime
 from tqdm import tqdm
 
@@ -9,10 +10,10 @@ from parser import find_box, strip_string
 
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 from accelerate import Accelerator
-from datasets import Dataset
+from datasets import Dataset, load_dataset
 from peft import LoraConfig, TaskType, PeftModel
 
-import vllm
+from vllm import LLM, SamplingParams
 
 def extract_data(path, batch_size):
     data = []
@@ -199,4 +200,48 @@ def run_lora_local_parallel(config):
 
 @logging_inference
 def sample_tor_local(config):
-    pass
+    llm = LLM(config['model'])
+    sparams = SamplingParams(
+        temperature=config['temperature'],
+        max_tokens=4096,
+        n=1,
+    )
+    data = extract_data(config['data_path'], config['batch_size'])
+    prompts = [f"{config['sys_prompt']}\n\n{d['problem']}" for d in data]
+    outputs = llm.generate(
+        prompts,
+        sparams
+    )
+    outputs = sorted(
+        outputs, key=lambda x: int(x.request_id)
+    )  # sort outputs by request_id
+
+@logging_inference
+def tor_gen_local(config):
+    model = AutoModelForCausalLM.from_pretrained(
+        config['model'], torch_dtype='auto'
+    )
+    tokenizer = AutoTokenizer.from_pretrained(config['model'])
+    accelerator = Accelerator()
+
+    ds = load_dataset(config['dataset'])
+    gen_size = 5 if config['test'] else config['gen_size']
+    random_indices = random.sample(range(len(ds)), config['gen_size'])
+    subset = ds.select(random_indices)
+
+    pipe = pipeline(
+        "text-generation",
+        model=model,
+        tokenizer=tokenizer,
+        device=accelerator.device
+    )
+
+    def add_generated_idea(example):
+        prompt = f"{config['summarize_prompt']}\n\n{example['prompt']}\n\n{example['response']}"
+        cnt = pipe(prompt, max_new_tokens=4096, return_full_text=False)
+        cnt = cnt[0]['generated_text']
+        example['idea'] = cnt
+        return example
+
+    gen_dataset = subset.map(add_generated_idea)
+    gen_dataset.save_to_disk('./augdata/')

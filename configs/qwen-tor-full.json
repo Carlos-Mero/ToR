@@ -12,7 +12,8 @@
   "sftparams": {
     "max_seq_length": 4096,
     "per_device_train_batch_size": 1,
-    "optim": "sgd",
+    "fp16": true,
+    "optimize_cuda_cache": true,
     "num_train_epochs": 8.0,
     "use_liger": true,
     "neftune_noise_alpha": 5
