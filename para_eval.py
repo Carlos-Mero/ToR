@@ -225,8 +225,9 @@ def tor_gen_local(config):
     accelerator = Accelerator()
 
     ds = load_dataset(config['dataset'])
+    ds = ds['validation']
     gen_size = 5 if config['test'] else config['gen_size']
-    random_indices = random.sample(range(len(ds)), config['gen_size'])
+    random_indices = random.sample(range(len(ds)), gen_size)
     subset = ds.select(random_indices)
 
     pipe = pipeline(
@@ -238,8 +239,14 @@ def tor_gen_local(config):
 
     def add_generated_idea(example):
         prompt = f"{config['summarize_prompt']}\n\n{example['prompt']}\n\n{example['response']}"
+        print("="*50)
+        print(f"working with prompt:")
+        print("="*50)
+        print(prompt)
         cnt = pipe(prompt, max_new_tokens=4096, return_full_text=False)
         cnt = cnt[0]['generated_text']
+        print("="*50)
+        print(f"generated idea:\n\n{cnt}")
         example['idea'] = cnt
         return example
 
