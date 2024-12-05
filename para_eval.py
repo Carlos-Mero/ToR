@@ -216,7 +216,6 @@ def sample_tor_local(config):
         outputs, key=lambda x: int(x.request_id)
     )  # sort outputs by request_id
 
-@logging_inference
 def tor_gen_local(config):
     model = AutoModelForCausalLM.from_pretrained(
         config['model'], torch_dtype='auto'
@@ -251,4 +250,4 @@ def tor_gen_local(config):
         return example
 
     gen_dataset = subset.map(add_generated_idea)
-    gen_dataset.save_to_disk('./augdata/')
+    gen_dataset.save_to_disk('./augdata/augmath')
