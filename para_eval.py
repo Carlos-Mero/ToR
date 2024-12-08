@@ -198,16 +198,20 @@ def run_lora_local_parallel(config):
     accuracy = float(solved_cnt) / float(problem_cnt)
     return accuracy, responses
 
-@logging_inference
 def sample_tor_local(config):
+    current_time = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+    path = "./augdata/"
     llm = LLM(config['model'])
     sparams = SamplingParams(
         temperature=config['temperature'],
         max_tokens=4096,
-        n=1,
     )
-    data = extract_data(config['data_path'], config['batch_size'])
-    prompts = [f"{config['sys_prompt']}\n\n{d['problem']}" for d in data]
+    ds = load_dataset(config['dataset'])
+    ds = ds['validation']
+    gen_size = 5 if config['test'] else config['gen_size']
+    random_indices = random.sample(range(len(ds)), gen_size)
+    subset = ds.select(random_indices)
+    prompts = [f"{config['summarize_prompt']}\n\n{d['prompt']}" for d in subset]
     outputs = llm.generate(
         prompts,
         sparams
@@ -215,6 +219,17 @@ def sample_tor_local(config):
     outputs = sorted(
         outputs, key=lambda x: int(x.request_id)
     )  # sort outputs by request_id
+    examples = []
+    for (opt, data) in zip(outputs, subset):
+        examples.append({
+            "problem": data['prompt'],
+            "solution": data['response'],
+            "idea": opt.response
+        })
+    save_jsonl(examples, path + f"{current_time}.jsonl")
+    with open(path + f"config-{current_time}.json", "w", encoding='utf-8') as f:
+        json.dump(config, f, indent=4)
+    print(f"Successfully saved data to path: {path}")
 
 def tor_gen_local(config):
     model = AutoModelForCausalLM.from_pretrained(
@@ -239,7 +254,7 @@ def tor_gen_local(config):
     def add_generated_idea(example):
         prompt = f"{config['summarize_prompt']}\n\n{example['prompt']}\n\n{example['response']}"
         print("="*50)
-        print(f"working with prompt:")
+        print("working with prompt:")
         print("="*50)
         print(prompt)
         cnt = pipe(prompt, max_new_tokens=4096, return_full_text=False)
