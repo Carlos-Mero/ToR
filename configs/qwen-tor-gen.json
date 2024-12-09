@@ -1,5 +1,5 @@
 {
-	"description": "The simplest version of tor method, tested on MATH500 dataset with pass@1 accuracy",
+	"description": "Generate idea guidance with Qwen2.5-Math-7B-Instruct model",
 	"dataset": "yingyingzhang/metamath-qwen2-math",
 	"model": "Qwen/Qwen2.5-Math-7B-Instruct",
 	"type": "generate-local",
