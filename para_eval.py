@@ -204,11 +204,11 @@ def sample_tor_local(config):
     available_gpus = os.environ["CUDA_VISIBLE_DEVICES"].split(",")
     llm = LLM(
         config['model'],
-        tensor_parallel_size=len(available_gpus) // config['pipeline_parallel_size']
+        tensor_parallel_size=len(available_gpus)
     )
     sparams = SamplingParams(
         temperature=config['temperature'],
-        pipeline_parallel_size=config['pipeline_parallel_size'],
+        # pipeline_parallel_size=config['pipeline_parallel_size'],
         seed=config['seed'],
         max_tokens=512,
     )
