@@ -5,5 +5,5 @@
 	"type": "generate-local",
   "gen_size": 24000,
 	"extend_prompt": "Here is a math problem and its groud truth solution, you need to write down your own step-by-step solution based on them. You don't need to write down descriptions about your solution here. Finally you should put your final answer within \\boxed{}.",
-	"summarize_prompt": "Here is a step by step solution of a math problem. You need to summarize and describe the general idea of the whole solution to create a hint for the problem. You shuold not directly include any intermediate results or final result in your response. You should reply in the first person, as if you were an experienced math teacher explaining the idea behind this problem."
+	"summarize_prompt": "Here is a step by step solution of a math problem. You need to summarize and explain the general idea of the whole solution to create a hint for the problem. You shuold not directly include any intermediate results or final result in your response. You should reply in the first person."
 }
