@@ -1,7 +1,7 @@
 {
 	"description": "Generate idea guidance with Qwen2.5-Math-7B-Instruct model",
 	"dataset": "yingyingzhang/metamath-qwen2-math",
-	"model": "Qwen/Qwen2.5-Math-7B-Instruct",
+	"model": "Qwen/Qwen2.5-7B-Instruct",
 	"type": "generate-local",
   "gen_size": 24000,
 	"extend_prompt": "Here is a math problem and its groud truth solution, you need to write down your own step-by-step solution based on them. You don't need to write down descriptions about your solution here. Finally you should put your final answer within \\boxed{}.",
