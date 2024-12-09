@@ -204,7 +204,7 @@ def sample_tor_local(config):
     llm = LLM(config['model'])
     sparams = SamplingParams(
         temperature=config['temperature'],
-        max_tokens=4096,
+        max_tokens=512,
     )
     ds = load_dataset(config['dataset'])
     ds = ds['validation']
