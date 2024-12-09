@@ -224,7 +224,7 @@ def sample_tor_local(config):
         examples.append({
             "problem": data['prompt'],
             "solution": data['response'],
-            "idea": opt.response
+            "idea": opt.outputs[0].text
         })
     save_jsonl(examples, path + f"{current_time}.jsonl")
     with open(path + f"config-{current_time}.json", "w", encoding='utf-8') as f:
