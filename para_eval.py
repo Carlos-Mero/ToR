@@ -202,8 +202,11 @@ def sample_tor_local(config):
     current_time = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
     path = "./augdata/"
     llm = LLM(config['model'])
+    available_gpus = os.environ["CUDA_VISIBLE_DEVICES"].split(",")
     sparams = SamplingParams(
         temperature=config['temperature'],
+        tensor_parallel_size=len(available_gpus) // config['pipeline_parallel_size;'],
+        pipeline_parallel_size=config['pipeline_parallel_size'],
         max_tokens=512,
     )
     ds = load_dataset(config['dataset'])
