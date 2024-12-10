@@ -14,7 +14,7 @@ def extract_training_data(config):
     for path in config['training_dataset']:
         print(f"loading data form: {path}")
         for p in load_jsonl(path):
-            p['answer'] = strip_string(p['answer'])
+            # p['answer'] = strip_string(p['answer'])
             comp = f"### Idea\n\n{p['idea']}\n\n### Detailed Solution\n\n{p['solution']}"\
                 if config['method'] == "tor" else\
                 f"### Detailed Solution\n\n{p['solution']}" 
